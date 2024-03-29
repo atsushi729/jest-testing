@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import Login, { validateEmail } from "../Login";
+import userEvent from "@testing-library/user-event";
 
 describe("test Login componetn", () => {
   // Check button element in Login component
@@ -26,5 +27,17 @@ describe("test Login componetn", () => {
   test("should be successed in email validation", () => {
     const testEmail = "test@gmail.com";
     expect(validateEmail(testEmail)).toBe(true);
+  });
+
+  test("should be able to submit the form", () => {
+    render(<Login />);
+    const submitButton = screen.getAllByTestId("submit");
+    const email = screen.getAllByPlaceholderText("Please enter email");
+    const password = screen.getAllByPlaceholderText("Please enter password");
+
+    userEvent.type(email, "test@gmail.com");
+    userEvent.type(password, "testtest");
+
+    userEvent.click(submitButton);
   });
 });
