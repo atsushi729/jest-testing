@@ -29,15 +29,18 @@ describe("test Login componetn", () => {
     expect(validateEmail(testEmail)).toBe(true);
   });
 
-  test("should be able to submit the form", () => {
+  test("should be able to submit the form", async () => {
     render(<Login />);
-    const submitButton = screen.getAllByTestId("submit");
-    const email = screen.getAllByPlaceholderText("Please enter email");
-    const password = screen.getAllByPlaceholderText("Please enter password");
 
-    userEvent.type(email, "test@gmail.com");
-    userEvent.type(password, "testtest");
+    const submitButton = screen.getByTestId("submit");
+    const emailInput = screen.getByPlaceholderText("Please enter email");
+    const passwordInput = screen.getByPlaceholderText("Please enter password");
+
+    userEvent.type(emailInput, "test@gmail.com");
+    userEvent.type(passwordInput, "testtest");
 
     userEvent.click(submitButton);
+    const userInfo = await screen.findByText("test@gmail.com");
+    expect(userInfo).toBeInTheDocument();
   });
 });
