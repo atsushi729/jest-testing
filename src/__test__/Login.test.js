@@ -44,3 +44,54 @@ describe("test Login componetn", () => {
     expect(userInfo).toBeInTheDocument();
   });
 });
+
+describe("Login Component", () => {
+  let emailInput, passwordInput, submitButton;
+
+  beforeEach(() => {
+    render(<Login />);
+    emailInput = screen.getByPlaceholderText(/please enter email/i);
+    passwordInput = screen.getByPlaceholderText(/please enter password/i);
+    submitButton = screen.getByTestId("submit");
+  });
+
+  test("renders a button to submit the form", () => {
+    expect(submitButton).toBeInTheDocument();
+  });
+
+  test("ensures the password field is of type password", () => {
+    expect(passwordInput).toHaveAttribute("type", "password");
+  });
+
+  describe("Email Validation", () => {
+    test("fails if the email is invalid", () => {
+      const invalidEmail = "test.com";
+      expect(validateEmail(invalidEmail)).toBeFalsy();
+    });
+
+    test("succeeds if the email is valid", () => {
+      const validEmail = "test@gmail.com";
+      expect(validateEmail(validEmail)).toBeTruthy();
+    });
+  });
+
+  describe("Form Submission", () => {
+    test("displays the user email if the submission is successful", async () => {
+      userEvent.type(emailInput, "test@gmail.com");
+      userEvent.type(passwordInput, "password123");
+      userEvent.click(submitButton);
+
+      const userInfo = await screen.findByText("test@gmail.com");
+      expect(userInfo).toBeInTheDocument();
+    });
+
+    test("displays an error message if the email is invalid", async () => {
+      userEvent.type(emailInput, "test");
+      userEvent.type(passwordInput, "password123");
+      userEvent.click(submitButton);
+
+      const errorAlert = await screen.findByTestId("error");
+      expect(errorAlert).toHaveTextContent("Email is not valid");
+    });
+  });
+});
